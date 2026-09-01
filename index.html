@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VOKARA - Berpikir Cepat. Bicara Jelas. Lebih Percaya Diri.</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Manrope & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- React & ReactDOM CDN -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  
+  <!-- Babel Standalone for JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #F7F5F2;
+      color: #1C1C1C;
+    }
+    h1, h2, h3, h4, .font-heading {
+      font-family: 'Manrope', sans-serif;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #F7F5F2;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #D5CFC9;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #7A1E2C;
+    }
+  </style>
+</head>
+<body class="selection:bg-[#7A1E2C] selection:text-white">
+
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef, useMemo } = React;
+
+    const TOPIC_DATABASE = [
+      "Keberanian", "Kegagalan terbesar dan pelajarannya", "Arti kebahagiaan sederhana",
+      "Keputusan tersulit yang pernah diambil", "Orang yang paling menginspirasimu",
+      "Hal yang ingin kamu ubah di masa lalu", "Menerima ketidaksempurnaan diri",
+      "Pentingnya mengenal diri sendiri", "Menghadapi rasa takut akan masa depan",
+      "Kekuatan dari sebuah kata maaf", "Arti sebuah rumah bagimu",
+      "Kebiasaan kecil yang mengubah hidup", "Momen ketika kamu merasa paling bangga",
+      "Menemukan ketenangan di tengah kesibukan", "Belajar melepaskan hal yang tidak bisa dikontrol",
+      "Nilai sebuah kejujuran dalam situasi sulit", "Menghargai proses daripada hasil",
+      "Pengorbanan yang paling berharga", "Pentingnya memiliki mimpi besar",
+      "Bagaimana kamu menyikapi kritik", "Menjadi pendengar yang baik",
+      "Arti kedewasaan yang sebenarnya", "Pelajaran hidup dari masa kecil",
+      "Menemukan tujuan hidup sehari-hari", "Cara kamu mengatasi rasa kecewa",
+      "Pentingnya memiliki batasan diri", "Bersyukur saat situasi tidak berjalan baik",
+      "Mengapa kita perlu berani berkata 'tidak'", "Makna sukses versimu sendiri",
+      "Pelajaran terbaik dari seorang sahabat", "Kepemimpinan yang sesungguhnya",
+      "Bekerja cerdas vs bekerja keras", "Etika profesional di era digital",
+      "Menghadapi rekan kerja yang sulit", "Pentingnya manajemen waktu",
+      "Gairah kerja (passion) atau gaji besar?", "Mengatasi kejenuhan kerja (burnout)",
+      "Keterampilan paling penting di masa depan", "Dampak kerja jarak jauh (work from home)",
+      "Menghadapi kegagalan dalam proyek besar", "Membangun hubungan profesional yang sehat",
+      "Pentingnya kemampuan adaptasi", "Kreativitas di tempat kerja",
+      "Apakah gelar kuliah masih relevan?", "Menjadi pemimpin yang berempati",
+      "Tantangan membangun usaha sendiri", "Pentingnya komunikasi non-verbal saat presentasi",
+      "Menghadapi wawancara kerja yang menegangkan", "Dilema antara idealisme dan realitas kerja",
+      "Membangun personal branding yang autentik", "Pentingnya istirahat untuk produktivitas",
+      "Menghadapi bos yang perfeksionis", "Kerja tim vs kerja mandiri",
+      "Belajar dari kesalahan profesional pertama", "Bagaimana cara menolak tugas tambahan dengan sopan",
+      "Keseimbangan hidup dan kerja (work-life balance)", "Mengapa networking itu penting tapi sering disalahartikan",
+      "Menghadapi sindrom penipu (imposter syndrome)", "Inovasi sederhana yang membawa dampak besar",
+      "Menjaga integritas di tempat kerja", "Arti keluarga di tengah dunia yang serba cepat",
+      "Sahabat sejati vs teman biasa", "Menyelesaikan konflik tanpa merusak hubungan",
+      "Pengaruh pola asuh terhadap kepribadian", "Pentingnya komunikasi terbuka dengan orang tua",
+      "Menghadapi teman yang menjauh perlahan", "Kekuatan apresiasi dalam hubungan",
+      "Dampak ekspektasi tinggi terhadap orang lain", "Memelihara persahabatan jarak jauh",
+      "Pentingnya ruang pribadi dalam sebuah hubungan", "Memaafkan tapi tidak melupakan",
+      "Mengapa mendengarkan lebih sulit daripada berbicara", "Hal paling berharga yang diajarkan keluarga",
+      "Menghargai perbedaan pendapat antar generasi", "Kapan sebaiknya kita menolong teman yang kesulitan?",
+      "Menjaga rasa saling percaya", "Bahaya membandingkan kehidupan keluarga dengan orang lain",
+      "Peran seorang mentor dalam hidup", "Menyampaikan kabar buruk dengan empati",
+      "Membangun lingkungan keluarga yang suportif", "Satu hari tanpa smartphone dan internet",
+      "Apakah AI akan menggantikan empati manusia?", "Dampak media sosial terhadap kesehatan mental",
+      "Privasi data di era digital", "Kecanduan scrolling dan rentang perhatian kita",
+      "Masa depan pendidikan dengan kecerdasan buatan", "Apakah teknologi mendekatkan yang jauh atau menjauhkan yang dekat?",
+      "Mobil otonom dan dilema etika teknologi", "Dunia metaverse: peluang atau pelarian?",
+      "Pengaruh algoritma terhadap cara kita berpikir", "Robotika dalam kehidupan rumah tangga",
+      "Keamanan siber bagi masyarakat awam", "Pentingnya literasi digital untuk generasi tua",
+      "Dampak belanja online terhadap perilaku konsumtif", "Apakah masa depan akan lebih baik dari hari ini?",
+      "Teknologi ramah lingkungan yang paling kamu harapkan", "Kecerdasan buatan dalam dunia seni dan musik",
+      "Dampak berita palsu (hoaks) terhadap demokrasi", "Ketergantungan manusia pada mesin pencari",
+      "Eksplorasi luar angkasa: apakah layak biayanya?", "Pendidikan karakter vs nilai akademis",
+      "Cara terbaik mempelajari hal baru dari nol", "Mengapa membaca buku tetap tak tergantikan?",
+      "Guru atau dosen yang paling berkesan bagimu", "Sistem ujian sekolah: apakah masih efektif?",
+      "Belajar dari pengalaman vs belajar dari teori", "Pentingnya pendidikan finansial sejak usia dini",
+      "Kekuatan rasa ingin tahu pada orang dewasa", "Mengapa kita sering takut bertanya di depan umum?",
+      "Metode belajar yang paling cocok untukmu", "Pentingnya belajar bahasa asing",
+      "Mengajarkan berpikir kritis kepada anak-anak", "Homeschooling vs sekolah konvensional",
+      "Belajar otodidak di era internet", "Mengapa kegagalan adalah guru terbaik?",
+      "Pendidikan gratis untuk semua: mungkinkah?", "Dampak perpustakaan umum di era digital",
+      "Menumbuhkan minat membaca pada anak muda", "Keterampilan bertahan hidup yang harus diajarkan di sekolah",
+      "Arti sejati dari seorang pembelajar seumur hidup", "Apakah uang bisa membeli kebahagiaan?",
+      "Gaya hidup minimalis di era konsumerisme", "Menabung vs berinvestasi: mana yang lebih penting?",
+      "Bahaya jebakan utang konsumtif dan pinjol", "Mendefinisikan arti cukup secara finansial",
+      "Mengelola pengeluaran pertama dari gaji pertama", "Pengaruh uang terhadap hubungan persahabatan",
+      "Berbagi rezeki: mengapa membuat kita lebih bahagia?", "Mempersiapkan masa pensiun sejak usia muda",
+      "Pentingnya dana darurat saat krisis tak terduga", "Membeli pengalaman vs membeli barang materi",
+      "Tekanan sosial untuk terlihat kaya di media sosial", "Mengajarkan anak tentang nilai uang",
+      "Tantangan membeli rumah pertama bagi generasi muda", "Bagaimana kamu menyikapi kegagalan finansial?",
+      "Perubahan iklim dan tanggung jawab individu", "Mengurangi sampah plastik dalam kehidupan sehari-hari",
+      "Toleransi di tengah masyarakat yang majemuk", "Pentingnya fasilitas umum yang ramah disabilitas",
+      "Budaya antre dan kedisiplinan sosial", "Dampak polusi udara terhadap kualitas hidup di kota",
+      "Gotong royong: warisan budaya yang mulai luntur?", "Menjaga kesehatan mental di lingkungan toxic",
+      "Etika berkomentar di media sosial", "Pentingnya ruang terbuka hijau di perkotaan",
+      "Hewan peliharaan dan rasa tanggung jawab", "Makanan lokal vs makanan cepat saji global",
+      "Bagaimana cara menjadi warga negara yang bertanggung jawab?", "Membantu tunawisma secara bermartabat",
+      "Konservasi air bersih untuk masa depan", "Jika kamu terpilih menjadi pemimpin sebuah kota selama seminggu",
+      "Jika kamu bisa berbicara dengan dirimu saat berusia 15 tahun", "Jika seluruh dunia kehilangan listrik selama 24 jam",
+      "Jika kamu bisa menguasai satu keahlian instan dalam semalam", "Jika kamu harus tinggal di pulau terpencil dan hanya membawa 3 benda",
+      "Jika kamu bisa makan malam dengan satu tokoh sejarah", "Jika kamu menemukan mesin penjelajah waktu",
+      "Jika hewan bisa berbicara bahasa manusia, apa yang akan mereka katakan?", "Jika kamu menulis buku tentang hidupmu, apa judul bab pertamanya?",
+      "Jika kamu memiliki kesempatan memberi pidato di depan seluruh dunia", "Jika kamu bisa menghapus satu penemuan manusia, apa yang akan kamu pilih?",
+      "Jika kamu bangun besok dan menjadi orang paling terkenal di negerimu", "Jika kamu bisa mengubah satu aturan hukum yang ada saat ini",
+      "Jika uang tidak lagi menjadi masalah, apa pekerjaan impianmu?", "Jika kamu bisa menciptakan hari libur nasional baru, perayaan apa itu?",
+      "Apa perbedaan antara merasa kesepian dan menikmati kesendirian?", "Apakah takdir itu diciptakan atau ditemukan?",
+      "Mengapa orang baik terkadang mengalami hal buruk?", "Mana yang lebih berbahaya: kebodohan atau kepura-puraan?",
+      "Apakah kebohongan putih (white lie) pernah dibenarkan?", "Bagaimana cara mendefinisikan keadilan yang adil bagi semua orang?",
+      "Apakah intuisi bisa dipercaya lebih dari logika?", "Mengapa manusia sulit merasa puas dengan apa yang sudah dimiliki?",
+      "Apakah kita lebih dikendalikan oleh masa lalu atau masa depan?", "Apa arti kebebasan yang sesungguhnya bagimu?",
+      "Apakah ada hal yang mutlak benar di dunia ini?", "Mengapa seni dan keindahan penting bagi jiwa manusia?",
+      "Apakah kesabaran ada batasnya?", "Bagaimana cara kita mengingat hal-hal yang benar-benar penting?",
+      "Apa warisan non-materi yang ingin kamu tinggalkan untuk dunia?", "Momen paling lucu yang tak pernah kamu lupakan",
+      "Hobi yang paling menyita waktumu belakangan ini", "Perjalanan paling berkesan dalam hidupmu",
+      "Makanan favorit yang selalu mengingatkanmu pada rumah", "Lagu yang selalu membangkitkan semangatmu",
+      "Bagaimana caramu memulai pagi agar produktif?", "Olahraga yang paling kamu sukai dan alasannya",
+      "Menghadapi hari yang buruk dengan senyuman", "Hal paling berani yang pernah kamu lakukan spontan",
+      "Buku yang mengubah cara pandangmu", "Film yang membuatmu merenung selama berhari-hari",
+      "Kebiasaan tidur yang sehat", "Menjaga fokus di dunia yang penuh distraksi",
+      "Pentingnya berjalan kaki setiap hari", "Kekuatan senyuman kepada orang asing",
+      "Pengalaman pertama berbicara di depan umum", "Menghadapi rasa gugup sebelum tampil",
+      "Mengapa bahasa tubuh sangat menentukan wibawa?", "Menata kerapian meja kerja untuk pikiran yang tenang",
+      "Mengurangi konsumsi gula dan dampaknya", "Pentingnya liburan tanpa memikirkan pekerjaan",
+      "Menghargai pedagang kecil di sekitar kita", "Mengapa kita harus bangga dengan budaya lokal kita?",
+      "Pentingnya menjaga kesehatan gigi dan fisik", "Menghadapi cuaca ekstrem",
+      "Menyikapi tren yang cepat berganti", "Belajar memasak makanan sendiri",
+      "Kekuatan menulis jurnal harian", "Menjaga rasa humor di masa sulit",
+      "Menghormati waktu orang lain dengan datang tepat waktu", "Bagaimana kamu mendefinisikan teman yang suportif?",
+      "Menemukan kebahagiaan dalam hal-hal kecil", "Menghadapi penolakan tanpa merasa rendah diri",
+      "Menjaga komitmen yang telah dibuat", "Mengapa kita perlu terus membaca berita terpercaya?",
+      "Menghindari gosip dan percakapan negatif", "Mengapresiasi karya seni jalanan",
+      "Pentingnya istirahat mata dari layar gawai", "Pengalaman paling mendebarkan saat bepergian",
+      "Menolong orang yang tidak kita kenal di jalan", "Mengapa kita harus belajar berkata jujur pada diri sendiri?",
+      "Pentingnya memiliki rutinitas malam", "Menyikapi perubahan rencana yang mendadak",
+      "Menghadapi kemacetan dengan kepala dingin", "Menumbuhkan rasa empati terhadap generasi yang lebih muda",
+      "Menjaga kelestarian satwa liar", "Arti kesederhanaan dalam berpakaian",
+      "Menghargai waktu luang tanpa merasa bersalah", "Kekuatan kata 'terima kasih' yang tulus",
+      "Menemukan teman baru di usia dewasa", "Menghadapi kegagalan ujian dengan lapang dada",
+      "Pentingnya sarapan bergizi sebelum beraktivitas", "Menghindari kebiasaan menunda pekerjaan",
+      "Menghadapi rasa cemburu secara dewasa", "Pentingnya mendaur ulang barang tak terpakai",
+      "Menghormati tetangga di lingkungan tempat tinggal", "Menjaga semangat belajar meski sudah tidak sekolah",
+      "Menemukan inspirasi di tempat yang tak terduga", "Mengapa kita harus berani mengakui ketidaktahuan kita?",
+      "Arti menjadi pribadi yang dapat diandalkan", "Menghadapi situasi darurat dengan tenang",
+      "Menjaga kesehatan mental saat menghadapi ujian hidup", "Pentingnya ruang diskusi yang sehat",
+      "Menghargai profesi guru dan tenaga pengajar", "Menumbuhkan optimisme di tengah ketidakpastian",
+      "Menjaga hubungan baik dengan rekan lama", "Menghadapi rasa bosan secara produktif",
+      "Pentingnya minum air putih yang cukup", "Mengapa kita perlu sesekali menyendiri di alam bebas?",
+      "Menghargai warisan kuliner tradisional nusantara", "Menyikapi pujian tanpa menjadi sombong",
+      "Mengatasi rasa ragu saat mengambil inisiatif", "Pentingnya peran relawan dalam aksi kemanusiaan",
+      "Menghormati pendapat orang yang lebih tua", "Mengapa olahraga tim melatih kepemimpinan?",
+      "Menjaga privasi keluarga dari konsumsi publik", "Menghadapi kegagalan kencan pertama dengan santai",
+      "Pentingnya memiliki keterampilan memasak dasar", "Menyikapi perbedaan selera musik antar teman",
+      "Menemukan arti bersyukur dalam setiap nafas", "Mengapa kita harus menjaga kebersihan fasilitas umum?",
+      "Pentingnya tidur cukup untuk daya ingat", "Menghargai jerih payah petani dan produsen makanan",
+      "Menghadapi rasa panik di depan panggung", "Menyampaikan ide kreatif dalam diskusi kelompok",
+      "Mengapa kita tidak boleh menghakimi penampilan fisik orang lain?", "Menjaga rasa penasaran seperti anak-anak",
+      "Menghargai keragaman bahasa daerah di Indonesia", "Menyikapi kekalahan dalam sebuah kompetisi",
+      "Pentingnya memiliki tabungan jangka panjang", "Menjaga kesehatan postur tubuh saat duduk lama",
+      "Menghadapi perbedaan pandangan politik secara beradab", "Mengapa kita perlu memaafkan diri kita di masa lalu?",
+      "Menjaga antusiasme dalam rutinitas kerja harian", "Pentingnya memiliki teladan hidup yang baik",
+      "Menikmati proses belajar tanpa terburu-buru", "Menjaga keharmonisan dalam komunitas",
+      "Menghadapi ketakutan berbicara dengan orang asing", "Pentingnya kejujuran akademik bagi pelajar",
+      "Menghargai setiap detik waktu bersama orang terkasih"
+    ];
+
+    const STORAGE_KEYS = {
+      HISTORY: 'VOKARA_PRACTICE_HISTORY',
+      USED_TOPICS: 'VOKARA_USED_TOPICS',
+      ACTIVE_SESSION: 'VOKARA_ACTIVE_SESSION'
+    };
+
+    const getStoredHistory = () => {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEYS.HISTORY);
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        return [];
+      }
+    };
+
+    const saveStoredHistory = (h) => {
+      try {
+        localStorage.setItem(STORAGE_KEYS.HISTORY, JSON.stringify(h));
+      } catch (e) {}
+    };
+
+    const getStoredUsedTopics = () => {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEYS.USED_TOPICS);
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        return [];
+      }
+    };
+
+    const saveStoredUsedTopics = (t) => {
+      try {
+        localStorage.setItem(STORAGE_KEYS.USED_TOPICS, JSON.stringify(t));
+      } catch (e) {}
+    };
+
+    const getActiveSession = () => {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEYS.ACTIVE_SESSION);
+        return raw ? JSON.parse(raw) : null;
+      } catch (e) {
+        return null;
+      }
+    };
+
+    const saveActiveSession = (s) => {
+      try {
+        if (s) {
+          localStorage.setItem(STORAGE_KEYS.ACTIVE_SESSION, JSON.stringify(s));
+        } else {
+          localStorage.removeItem(STORAGE_KEYS.ACTIVE_SESSION);
+        }
+      } catch (e) {}
+    };
+
+    const getLevelInfo = (count) => {
+      if (count <= 2) return { name: "PEMBICARA PEMULA", range: "0–2 latihan" };
+      if (count <= 7) return { name: "PEMBICARA BERKEMBANG", range: "3–7 latihan" };
+      if (count <= 15) return { name: "PEMBICARA PERCAYA DIRI", range: "8–15 latihan" };
+      if (count <= 30) return { name: "PEMBICARA MAHIR", range: "16–30 latihan" };
+      return { name: "MASTER BERBICARA", range: "31+ latihan" };
+    };
+
+    const detectFillerWords = (text) => {
+      if (!text || typeof text !== 'string') return { total: 0, breakdown: {} };
+      const patterns = [
+        { label: "Eee", regex: /\b(e{2,}|e)\b/gi },
+        { label: "Emm", regex: /\b(em+|ehm+)\b/gi },
+        { label: "Hmm", regex: /\b(hm+)\b/gi },
+        { label: "Anu", regex: /\b(anu)\b/gi },
+        { label: "Apa namanya", regex: /\b(apa\s+namanya)\b/gi }
+      ];
+      let total = 0;
+      const breakdown = {};
+      patterns.forEach(item => {
+        const matches = text.match(item.regex);
+        const count = matches ? matches.length : 0;
+        if (count > 0) {
+          breakdown[item.label] = count;
+          total += count;
+        }
+      });
+      return { total, breakdown };
+    };
+
+    const calculateMetrics = (actualSec, targetSec, fillerCount, thinkingMoments, transcript) => {
+      const words = transcript ? transcript.trim().split(/\s+/).filter(Boolean).length : 0;
+      const completionRatio = Math.min(actualSec / Math.max(targetSec, 1), 1);
+      
+      let baseScore = completionRatio * 80;
+      const wpm = actualSec > 0 ? (words / actualSec) * 60 : 0;
+      if (wpm >= 70 && wpm <= 150) baseScore += 15;
+      else if (wpm > 30) baseScore += 8;
+
+      const fillerPenalty = Math.min(fillerCount * 2.5, 20);
+      const thinkingPenalty = Math.min(thinkingMoments * 3, 15);
+      
+      let fluencyScore = Math.round(Math.max(25, Math.min(98, baseScore - fillerPenalty - thinkingPenalty + 5)));
+      if (actualSec < 15) fluencyScore = Math.min(fluencyScore, 35);
+
+      let confidenceScore = Math.round((fluencyScore * 0.6) + (completionRatio * 35));
+      confidenceScore = Math.min(96, Math.max(30, confidenceScore));
+
+      return { fluencyScore, confidenceScore };
+    };
+
+    const generateHumanFeedback = (actualSec, targetSec, fluencyScore, fillerCount, thinkingMoments) => {
+      const ratio = actualSec / targetSec;
+      let feedback = "";
+      let nextFocus = "";
+
+      if (ratio >= 0.85) {
+        if (fillerCount <= 3 && thinkingMoments <= 2) {
+          feedback = "Kamu mampu mempertahankan tempo dan alur pembicaraan dengan sangat tenang. Kalimatmu mengalir terstruktur tanpa banyak hambatan.";
+          nextFocus = "Pertahankan konsistensi ini dan cobalah bereksperimen dengan intonasi vokal yang lebih dinamis untuk memperkuat penekanan gagasan penting.";
+        } else if (fillerCount > 5) {
+          feedback = "Durasimu sangat baik dan idemu terus mengalir. Terkadang kata pengisi muncul ketika kamu sedang mencari kalimat sambungan.";
+          nextFocus = "Saat membutuhkan waktu berpikir, gunakan jeda senyap (silent pause) alih-alih mengucapkan 'eee' atau 'emm'. Hening sejenak terdengar jauh lebih berwibawa.";
+        } else {
+          feedback = "Kamu berhasil berbicara hingga mendekati target waktu. Beberapa jeda berpikir terlihat wajar untuk menyusun poin pikiran.";
+          nextFocus = "Latih transisi antar kalimat agar gagasan utamamu tersambung lebih padu dari awal hingga akhir.";
+        }
+      } else if (ratio >= 0.5) {
+        feedback = "Kamu sudah menunjukkan keberanian untuk menyampaikan ide spontan selama lebih dari separuh durasi target. Itu adalah langkah awal yang sangat berharga.";
+        nextFocus = "Pada latihan berikutnya, gunakan teknik 3 poin sederhana (Pengantar, Cerita/Argumen, dan Kesimpulan) agar kamu tidak kehabisan materi di tengah jalan.";
+      } else {
+        feedback = "Memulai berbicara spontan memang menantang. Setiap kata yang kamu ucapkan adalah bentuk latihan melatih keberanian pikiranmu.";
+        nextFocus = "Jangan terburu-buru menyelesaikan. Ambil napas perlahan, dan sampaikan contoh sederhana dari pengalaman pribadi saat membahas topik.";
+      }
+
+      return { feedback, nextFocus };
+    };
+
+    const formatSeconds = (sec) => {
+      const m = Math.floor(sec / 60);
+      const s = sec % 60;
+      return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    };
+
+    const formatDurationText = (sec) => {
+      const m = Math.floor(sec / 60);
+      const s = sec % 60;
+      if (m > 0 && s > 0) return `${m} menit ${s} detik`;
+      if (m > 0) return `${m} menit`;
+      return `${s} detik`;
+    };
+
+    const formatDateText = (dateStr) => {
+      try {
+        const d = new Date(dateStr);
+        const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+      } catch (e) {
+        return dateStr;
+      }
+    };
+
+    function App() {
+      const [currentTab, setCurrentTab] = useState('BERANDA');
+      const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+      const [history, setHistory] = useState([]);
+      const [usedTopics, setUsedTopics] = useState([]);
+      const [activeSessionNotice, setActiveSessionNotice] = useState(null);
+
+      // Practice State
+      const [practiceStep, setPracticeStep] = useState('PREPARE');
+      const [currentTopic, setCurrentTopic] = useState('');
+      const [shuffleText, setShuffleText] = useState('KEBERANIAN');
+      const [thinkingSeconds, setThinkingSeconds] = useState(30);
+      const [targetDuration, setTargetDuration] = useState(60);
+      const [elapsedSpeakingSeconds, setElapsedSpeakingSeconds] = useState(0);
+      const [isSpeakingPaused, setIsSpeakingPaused] = useState(false);
+      const [liveTranscript, setLiveTranscript] = useState('');
+      const [micError, setMicError] = useState(null);
+      const [speechSupported, setSpeechSupported] = useState(true);
+      const [thinkingMomentsCount, setThinkingMomentsCount] = useState(0);
+
+      const [latestResult, setLatestResult] = useState(null);
+      const [selectedHistoryItem, setSelectedHistoryItem] = useState(null);
+      const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+      // Refs
+      const audioContextRef = useRef(null);
+      const analyserRef = useRef(null);
+      const micStreamRef = useRef(null);
+      const animationFrameRef = useRef(null);
+      const canvasRef = useRef(null);
+      const recognitionRef = useRef(null);
+      const lastSpeechTimeRef = useRef(Date.now());
+      const thinkingTimerRef = useRef(null);
+
+      useEffect(() => {
+        setHistory(getStoredHistory());
+        setUsedTopics(getStoredUsedTopics());
+        const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRec) setSpeechSupported(false);
+
+        const savedActive = getActiveSession();
+        if (savedActive && savedActive.topic) setActiveSessionNotice(savedActive);
+      }, []);
+
+      useEffect(() => {
+        if (window.lucide) {
+          window.lucide.createIcons();
+        }
+      });
+
+      const handleUpdateHistory = (newH) => {
+        setHistory(newH);
+        saveStoredHistory(newH);
+      };
+
+      const dashboardStats = useMemo(() => {
+        const totalPractices = history.length;
+        if (totalPractices === 0) {
+          return {
+            totalPractices: 0,
+            totalMinutes: 0,
+            avgFluency: '—',
+            avgFillers: '—',
+            confidenceScore: '—',
+            level: getLevelInfo(0)
+          };
+        }
+        const totalSeconds = history.reduce((acc, curr) => acc + (curr.actualDuration || 0), 0);
+        const totalMinutes = Math.round(totalSeconds / 60);
+        const totalFluency = history.reduce((acc, curr) => acc + (curr.fluencyScore || 0), 0);
+        const avgFluency = Math.round(totalFluency / totalPractices) + '%';
+        const totalFillers = history.reduce((acc, curr) => acc + (curr.fillerCount || 0), 0);
+        const avgFillers = (totalFillers / totalPractices).toFixed(1);
+
+        const recent = history.slice(0, 5);
+        const recentConfidence = Math.round(
+          recent.reduce((acc, curr) => acc + (curr.confidenceScore || 50), 0) / recent.length
+        );
+
+        return {
+          totalPractices,
+          totalMinutes,
+          avgFluency,
+          avgFillers,
+          confidenceScore: recentConfidence + '%',
+          level: getLevelInfo(totalPractices)
+        };
+      }, [history]);
+
+      const startTopicShuffle = () => {
+        setPracticeStep('SHUFFLING');
+        setMicError(null);
+
+        let available = TOPIC_DATABASE.filter(t => !usedTopics.includes(t));
+        if (available.length === 0) {
+          available = [...TOPIC_DATABASE];
+          setUsedTopics([]);
+          saveStoredUsedTopics([]);
+        }
+
+        const chosen = available[Math.floor(Math.random() * available.length)];
+        let counter = 0;
+        const interval = setInterval(() => {
+          counter++;
+          const randT = TOPIC_DATABASE[Math.floor(Math.random() * TOPIC_DATABASE.length)];
+          setShuffleText(randT.toUpperCase());
+
+          if (counter >= 22) {
+            clearInterval(interval);
+            setShuffleText(chosen.toUpperCase());
+            setCurrentTopic(chosen);
+
+            const newUsed = [...usedTopics, chosen];
+            setUsedTopics(newUsed);
+            saveStoredUsedTopics(newUsed);
+
+            setTimeout(() => {
+              setThinkingSeconds(30);
+              setPracticeStep('THINKING');
+            }, 600);
+          }
+        }, 65);
+      };
+
+      useEffect(() => {
+        let timer = null;
+        if (practiceStep === 'THINKING' && thinkingSeconds > 0) {
+          timer = setInterval(() => {
+            setThinkingSeconds(prev => {
+              if (prev <= 1) {
+                clearInterval(timer);
+                setPracticeStep('CHOOSE_DURATION');
+                return 0;
+              }
+              return prev - 1;
+            });
+          }, 1000);
+        }
+        return () => { if (timer) clearInterval(timer); };
+      }, [practiceStep, thinkingSeconds]);
+
+      const startSpeakingSession = async (chosenDurationSec) => {
+        setTargetDuration(chosenDurationSec);
+        setElapsedSpeakingSeconds(0);
+        setLiveTranscript('');
+        setIsSpeakingPaused(false);
+        setThinkingMomentsCount(0);
+        setPracticeStep('SPEAKING');
+
+        saveActiveSession({
+          topic: currentTopic,
+          targetDuration: chosenDurationSec,
+          createdAt: new Date().toISOString()
+        });
+
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          micStreamRef.current = stream;
+          setMicError(null);
+
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (AudioCtx) {
+            const audioCtx = new AudioCtx();
+            audioContextRef.current = audioCtx;
+            const analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 64;
+            analyserRef.current = analyser;
+            const source = audioCtx.createMediaStreamSource(stream);
+            source.connect(analyser);
+            drawWaveform();
+          }
+
+          initSpeechRecognition();
+        } catch (err) {
+          setMicError("Kami tidak dapat mengakses mikrofon. Periksa izin mikrofon di browsermu.");
+        }
+      };
+
+      const initSpeechRecognition = () => {
+        const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRec) {
+          setSpeechSupported(false);
+          return;
+        }
+
+        try {
+          const recognition = new SpeechRec();
+          recognition.continuous = true;
+          recognition.interimResults = true;
+          recognition.lang = 'id-ID';
+
+          recognition.onresult = (event) => {
+            let interim = '';
+            let final = '';
+            for (let i = 0; i < event.results.length; i++) {
+              const piece = event.results[i][0].transcript;
+              if (event.results[i].isFinal) final += piece + ' ';
+              else interim += piece;
+            }
+            setLiveTranscript((final + interim).trim());
+            lastSpeechTimeRef.current = Date.now();
+          };
+
+          recognition.onend = () => {
+            if (practiceStep === 'SPEAKING' && !isSpeakingPaused && micStreamRef.current) {
+              try { recognition.start(); } catch (e) {}
+            }
+          };
+
+          recognition.start();
+          recognitionRef.current = recognition;
+        } catch (err) {}
+      };
+
+      useEffect(() => {
+        if (practiceStep === 'SPEAKING' && !isSpeakingPaused) {
+          lastSpeechTimeRef.current = Date.now();
+          thinkingTimerRef.current = setInterval(() => {
+            const silence = (Date.now() - lastSpeechTimeRef.current) / 1000;
+            if (silence > 3.2 && silence < 4.0) {
+              setThinkingMomentsCount(prev => prev + 1);
+            }
+          }, 1000);
+        } else {
+          if (thinkingTimerRef.current) clearInterval(thinkingTimerRef.current);
+        }
+        return () => { if (thinkingTimerRef.current) clearInterval(thinkingTimerRef.current); };
+      }, [practiceStep, isSpeakingPaused]);
+
+      const drawWaveform = () => {
+        if (!canvasRef.current || !analyserRef.current) return;
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext('2d');
+        const analyser = analyserRef.current;
+        const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+        const render = () => {
+          animationFrameRef.current = requestAnimationFrame(render);
+          analyser.getByteFrequencyData(dataArray);
+
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          const barCount = 20;
+          const barWidth = 4;
+          const gap = 6;
+          const totalWidth = barCount * (barWidth + gap);
+          let startX = (canvas.width - totalWidth) / 2;
+
+          for (let i = 0; i < barCount; i++) {
+            const val = dataArray[i % dataArray.length] || 0;
+            let barHeight = isSpeakingPaused ? 4 : Math.max(4, (val / 255) * canvas.height * 0.85);
+            const x = startX + i * (barWidth + gap);
+            const y = (canvas.height - barHeight) / 2;
+
+            ctx.fillStyle = isSpeakingPaused ? '#C4B5B8' : '#7A1E2C';
+            ctx.beginPath();
+            ctx.rect(x, y, barWidth, barHeight);
+            ctx.fill();
+          }
+        };
+        render();
+      };
+
+      useEffect(() => {
+        let interval = null;
+        if (practiceStep === 'SPEAKING' && !isSpeakingPaused) {
+          interval = setInterval(() => {
+            setElapsedSpeakingSeconds(prev => {
+              const nextSec = prev + 1;
+              if (nextSec >= targetDuration) {
+                clearInterval(interval);
+                finishSpeakingSession(nextSec);
+                return targetDuration;
+              }
+              return nextSec;
+            });
+          }, 1000);
+        }
+        return () => { if (interval) clearInterval(interval); };
+      }, [practiceStep, isSpeakingPaused, targetDuration]);
+
+      const stopAudioResources = () => {
+        if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+        if (recognitionRef.current) {
+          try { recognitionRef.current.stop(); } catch (e) {}
+        }
+        if (micStreamRef.current) {
+          micStreamRef.current.getTracks().forEach(t => t.stop());
+          micStreamRef.current = null;
+        }
+        if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+          audioContextRef.current.close().catch(() => {});
+        }
+      };
+
+      const togglePause = () => {
+        if (isSpeakingPaused) {
+          setIsSpeakingPaused(false);
+          lastSpeechTimeRef.current = Date.now();
+          if (recognitionRef.current) {
+            try { recognitionRef.current.start(); } catch (e) {}
+          }
+        } else {
+          setIsSpeakingPaused(true);
+          if (recognitionRef.current) {
+            try { recognitionRef.current.stop(); } catch (e) {}
+          }
+        }
+      };
+
+      const finishSpeakingSession = (finalSec = elapsedSpeakingSeconds) => {
+        const actualSec = finalSec || elapsedSpeakingSeconds;
+        stopAudioResources();
+
+        const { total: fillerCount, breakdown: fillerDetails } = detectFillerWords(liveTranscript);
+        const { fluencyScore, confidenceScore } = calculateMetrics(actualSec, targetDuration, fillerCount, thinkingMomentsCount, liveTranscript);
+        const { feedback, nextFocus } = generateHumanFeedback(actualSec, targetDuration, fluencyScore, fillerCount, thinkingMomentsCount);
+
+        const newRecord = {
+          id: 'vokara_' + Date.now(),
+          topic: currentTopic,
+          targetDuration,
+          actualDuration: actualSec,
+          fluencyScore,
+          fillerCount,
+          fillerDetails,
+          thinkingMoments: thinkingMomentsCount,
+          confidenceScore,
+          transcript: liveTranscript.trim() || 'Transkrip belum tersedia untuk latihan ini.',
+          feedback,
+          nextFocus,
+          createdAt: new Date().toISOString()
+        };
+
+        const updated = [newRecord, ...history];
+        handleUpdateHistory(updated);
+        saveActiveSession(null);
+        setActiveSessionNotice(null);
+
+        setLatestResult(newRecord);
+        setPracticeStep('RESULT');
+      };
+
+      const handleClearAllData = () => {
+        localStorage.removeItem(STORAGE_KEYS.HISTORY);
+        localStorage.removeItem(STORAGE_KEYS.USED_TOPICS);
+        localStorage.removeItem(STORAGE_KEYS.ACTIVE_SESSION);
+        setHistory([]);
+        setUsedTopics([]);
+        setActiveSessionNotice(null);
+        setLatestResult(null);
+        setShowDeleteModal(false);
+        setCurrentTab('BERANDA');
+        setPracticeStep('PREPARE');
+      };
+
+      return (
+        <div className="min-h-screen flex flex-col">
+          
+          {/* Header */}
+          <header className="sticky top-0 z-40 bg-[#F7F5F2]/90 backdrop-blur-md border-b border-[#E8E4DF]">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 h-18 py-4 flex items-center justify-between">
+              <button 
+                onClick={() => { setCurrentTab('BERANDA'); setPracticeStep('PREPARE'); }}
+                className="flex items-center gap-2 font-heading text-2xl font-extrabold tracking-tight text-[#7A1E2C]"
+              >
+                VOKARA
+              </button>
+
+              <nav className="hidden md:flex items-center gap-1 font-medium text-sm">
+                {[
+                  { id: 'BERANDA', label: 'Beranda' },
+                  { id: 'LATIHAN', label: 'Latihan' },
+                  { id: 'PERKEMBANGAN', label: 'Perkembangan' },
+                  { id: 'RIWAYAT', label: 'Riwayat' }
+                ].map(tab => (
+                  <button
+                    key={tab.id}
+                    onClick={() => {
+                      if (practiceStep === 'SPEAKING') stopAudioResources();
+                      setCurrentTab(tab.id);
+                      if (tab.id === 'LATIHAN' && practiceStep === 'RESULT') setPracticeStep('PREPARE');
+                    }}
+                    className={`px-4 py-2 rounded-lg transition-colors ${
+                      currentTab === tab.id
+                        ? 'text-[#7A1E2C] font-semibold bg-[#7A1E2C]/8'
+                        : 'text-[#6B6B6B] hover:text-[#1C1C1C] hover:bg-black/5'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </nav>
+
+              <div className="hidden md:flex items-center gap-3">
+                <button
+                  onClick={() => {
+                    if (practiceStep === 'SPEAKING') stopAudioResources();
+                    setCurrentTab('LATIHAN');
+                    setPracticeStep('PREPARE');
+                  }}
+                  className="bg-[#7A1E2C] hover:bg-[#631723] text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-all shadow-sm"
+                >
+                  Mulai Latihan
+                </button>
+              </div>
+
+              <div className="md:hidden">
+                <button
+                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                  className="p-2 text-[#1C1C1C]"
+                >
+                  <i data-lucide={mobileMenuOpen ? "x" : "menu"}></i>
+                </button>
+              </div>
+            </div>
+
+            {mobileMenuOpen && (
+              <div className="md:hidden bg-[#F7F5F2] border-b border-[#E8E4DF] px-4 py-4 space-y-2">
+                {[
+                  { id: 'BERANDA', label: 'Beranda' },
+                  { id: 'LATIHAN', label: 'Latihan' },
+                  { id: 'PERKEMBANGAN', label: 'Perkembangan' },
+                  { id: 'RIWAYAT', label: 'Riwayat' }
+                ].map(tab => (
+                  <button
+                    key={tab.id}
+                    onClick={() => {
+                      if (practiceStep === 'SPEAKING') stopAudioResources();
+                      setCurrentTab(tab.id);
+                      setMobileMenuOpen(false);
+                      if (tab.id === 'LATIHAN' && practiceStep === 'RESULT') setPracticeStep('PREPARE');
+                    }}
+                    className={`w-full text-left px-4 py-2 rounded-lg font-medium text-sm ${
+                      currentTab === tab.id ? 'text-[#7A1E2C] bg-[#7A1E2C]/8 font-semibold' : 'text-[#6B6B6B]'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </header>
+
+          {/* Active Session Notice */}
+          {activeSessionNotice && currentTab !== 'LATIHAN' && (
+            <div className="bg-[#7A1E2C] text-white px-4 py-3">
+              <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-sm">
+                <span><strong>Latihanmu belum selesai:</strong> Topik "{activeSessionNotice.topic}"</span>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      setCurrentTab('LATIHAN');
+                      setCurrentTopic(activeSessionNotice.topic);
+                      setTargetDuration(activeSessionNotice.targetDuration);
+                      setActiveSessionNotice(null);
+                      startSpeakingSession(activeSessionNotice.targetDuration);
+                    }}
+                    className="bg-white text-[#7A1E2C] px-3 py-1 rounded text-xs font-semibold"
+                  >
+                    Lanjutkan
+                  </button>
+                  <button
+                    onClick={() => {
+                      saveActiveSession(null);
+                      setActiveSessionNotice(null);
+                    }}
+                    className="text-white/80 hover:text-white text-xs px-2 py-1"
+                  >
+                    Akhiri
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Main Views */}
+          <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 md:py-12">
+            
+            {/* BERANDA */}
+            {currentTab === 'BERANDA' && (
+              <div className="space-y-12">
+                <div className="space-y-6 max-w-3xl">
+                  <div className="inline-block px-3 py-1 rounded-full bg-[#7A1E2C]/10 text-[#7A1E2C] text-xs font-semibold uppercase">
+                    Platform Latihan Spontan
+                  </div>
+                  <h1 className="font-heading text-3xl sm:text-5xl font-extrabold tracking-tight text-[#1C1C1C] leading-tight">
+                    BICARA LEBIH BAIK.<br />
+                    BERPIKIR LEBIH CEPAT.<br />
+                    <span className="text-[#7A1E2C]">LEBIH PERCAYA DIRI.</span>
+                  </h1>
+                  <p className="text-[#6B6B6B] text-base sm:text-lg leading-relaxed">
+                    Latih kemampuan berbicara secara spontan melalui topik acak, batas waktu terstruktur, dan evaluasi terukur yang membantu kamu berkembang dari satu latihan ke latihan berikutnya.
+                  </p>
+                  <div className="pt-2 flex flex-wrap gap-4">
+                    <button
+                      onClick={() => { setCurrentTab('LATIHAN'); setPracticeStep('PREPARE'); }}
+                      className="bg-[#7A1E2C] hover:bg-[#631723] text-white px-7 py-3.5 rounded-xl font-semibold text-base transition-all"
+                    >
+                      MULAI LATIHAN
+                    </button>
+                    <button
+                      onClick={() => setCurrentTab('RIWAYAT')}
+                      className="border border-[#E8E4DF] bg-white text-[#1C1C1C] px-6 py-3.5 rounded-xl font-medium text-base"
+                    >
+                      Lihat Riwayat
+                    </button>
+                  </div>
+                </div>
+
+                <div className="border-t border-[#E8E4DF] pt-10 space-y-6">
+                  <div className="flex justify-between items-end">
+                    <div>
+                      <h2 className="font-heading text-xl sm:text-2xl font-bold">SELAMAT DATANG, PEMBICARA.</h2>
+                      <p className="text-[#6B6B6B] text-sm mt-1">Setiap kali kamu berbicara, kamu sedang melatih keberanianmu.</p>
+                    </div>
+                    {dashboardStats.totalPractices > 0 && (
+                      <span className="text-xs font-semibold px-3 py-1 bg-white border border-[#E8E4DF] rounded-lg text-[#7A1E2C]">
+                        {dashboardStats.level.name}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                    <div className="bg-white border border-[#E8E4DF] rounded-xl p-4">
+                      <span className="text-xs font-semibold text-[#6B6B6B] uppercase">Total Latihan</span>
+                      <div className="mt-2 text-2xl font-bold font-heading">{dashboardStats.totalPractices}</div>
+                    </div>
+                    <div className="bg-white border border-[#E8E4DF] rounded-xl p-4">
+                      <span className="text-xs font-semibold text-[#6B6B6B] uppercase">Waktu Berbicara</span>
+                      <div className="mt-2 text-2xl font-bold font-heading">{dashboardStats.totalMinutes} <span className="text-xs font-normal">menit</span></div>
+                    </div>
+                    <div className="bg-white border border-[#E8E4DF] rounded-xl p-4">
+                      <span className="text-xs font-semibold text-[#6B6B6B] uppercase">Kelancaran</span>
+                      <div className="mt-2 text-2xl font-bold font-heading">{dashboardStats.avgFluency}</div>
+                    </div>
+                    <div className="bg-white border border-[#E8E4DF] rounded-xl p-4">
+                      <span className="text-xs font-semibold text-[#6B6B6B] uppercase">Kata Pengisi</span>
+                      <div className="mt-2 text-2xl font-bold font-heading">{dashboardStats.avgFillers}</div>
+                    </div>
+                    <div className="col-span-2 sm:col-span-1 bg-white border border-[#E8E4DF] rounded-xl p-4">
+                      <span className="text-xs font-semibold text-[#6B6B6B] uppercase">Kepercayaan Diri</span>
+                      <div className="mt-2 text-2xl font-bold font-heading text-[#7A1E2C]">{dashboardStats.confidenceScore}</div>
+                    </div>
+                  </div>
+
+                  {history.length === 0 ? (
+                    <div className="bg-white border border-[#E8E4DF] rounded-2xl p-8 sm:p-12 text-center space-y-4">
+                      <h3 className="font-heading text-lg font-bold">PERJALANANMU DIMULAI DI SINI.</h3>
+                      <p className="text-sm text-[#6B6B6B]">Selesaikan latihan pertamamu untuk mulai melihat perkembanganmu.</p>
+                      <button
+                        onClick={() => { setCurrentTab('LATIHAN'); setPracticeStep('PREPARE'); }}
+                        className="bg-[#7A1E2C] text-white px-6 py-2.5 rounded-lg text-sm font-medium"
+                      >
+                        MULAI LATIHAN
+                      </button>
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+            )}
+
+            {/* LATIHAN */}
+            {currentTab === 'LATIHAN' && (
+              <div className="max-w-2xl mx-auto">
+                {practiceStep === 'PREPARE' && (
+                  <div className="bg-white border border-[#E8E4DF] rounded-2xl p-8 sm:p-12 text-center space-y-6">
+                    <span className="inline-block px-3 py-1 rounded-full bg-[#7A1E2C]/8 text-[#7A1E2C] text-xs font-semibold uppercase">
+                      Sesi Latihan Spontan
+                    </span>
+                    <h2 className="font-heading text-2xl sm:text-3xl font-extrabold">SIAP?</h2>
+                    <p className="text-[#6B6B6B] text-base">
+                      Kamu tidak akan tahu apa yang akan muncul. Berpikirlah spontan dan gunakan kata-katamu sendiri.
+                    </p>
+                    <button
+                      onClick={startTopicShuffle}
+                      className="bg-[#7A1E2C] hover:bg-[#631723] text-white px-8 py-4 rounded-xl font-semibold text-base"
+                    >
+                      MULAI ACAK
+                    </button>
+                  </div>
+                )}
+
+                {practiceStep === 'SHUFFLING' && (
+                  <div className="bg-white border border-[#E8E4DF] rounded-2xl p-12 text-center space-y-6">
+                    <span className="text-xs font-semibold text-[#6B6B6B] uppercase">Mengocok Topik Spontan</span>
+                    <div className="py-8 font-heading text-2xl sm:text-3xl font-extrabold text-[#7A1E2C]">
+                      {shuffleText}
+                    </div>
+                  </div>
+                )}
+
+                {practiceStep === 'THINKING' && (
+                  <div className="bg-white border border-[#E8E4DF] rounded-2xl p-8 sm:p-12 text-center space-y-8">
+                    <div>
+                      <span className="text-xs font-semibold text-[#6B6B6B] uppercase">Topik yang Muncul</span>
+                      <h2 className="font-heading text-2xl sm:text-4xl font-extrabold text-[#7A1E2C] mt-2">{currentTopic}</h2>
+                    </div>
+                    <div className="py-4 space-y-2">
+                      <div className="text-5xl font-extrabold font-heading">{thinkingSeconds}</div>
+                      <p className="text-sm text-[#6B6B6B]">Kamu punya 30 detik untuk menyusun pikiran. Mikrofon belum aktif.</p>
+                    </div>
+                    <button
+                      onClick={() => { setThinkingSeconds(0); setPracticeStep('CHOOSE_DURATION'); }}
+                      className="text-xs text-[#6B6B6B] border border-[#E8E4DF] px-4 py-2 rounded-lg"
+                    >
+                      Lewati Waktu Berpikir
+                    </button>
+                  </div>
+                )}
+
+                {practiceStep === 'CHOOSE_DURATION' && (
+                  <div className="bg-white border border-[#E8E4DF] rounded-2xl p-8 sm:p-12 text-center space-y-8">
+                    <h3 className="font-heading text-xl font-bold text-[#7A1E2C]">"{currentTopic}"</h3>
+                    <div className="space-y-4">
+                      <h4 className="font-heading font-bold text-lg">BERAPA LAMA KAMU SIAP BERBICARA?</h4>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        {[{ sec: 60, l: "1 MENIT" }, { sec: 120, l: "2 MENIT" }, { sec: 180, l: "3 MENIT" }, { sec: 300, l: "5 MENIT" }].map(opt => (
+                          <button
+                            key={opt.sec}
+                            onClick={() => startSpeakingSession(opt.sec)}
+                            className="p-4 rounded-xl border border-[#E8E4DF] hover:border-[#7A1E2C] font-heading font-extrabold"
+                          >
+                            {opt.l}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {practiceStep === 'SPEAKING' && (
+                  <div className="bg-white border border-[#E8E4DF] rounded-2xl p-8 sm:p-12 text-center space-y-8">
+                    <div>
+                      <span className="text-xs font-semibold text-[#6B6B6B] uppercase">Topik</span>
+                      <h2 className="font-heading text-2xl font-extrabold text-[#7A1E2C]">{currentTopic}</h2>
+                    </div>
+                    <div className="text-6xl font-extrabold font-heading">
+                      {formatSeconds(targetDuration - elapsedSpeakingSeconds)}
+                    </div>
+                    <div className="h-16 flex items-center justify-center">
+                      <canvas ref={canvasRef} width={300} height={60} className="w-full max-w-xs h-12"></canvas>
+                    </div>
+                    {micError && <p className="text-xs text-rose-700 bg-rose-50 p-2 rounded">{micError}</p>}
+                    <div className="flex justify-center gap-4">
+                      <button
+                        onClick={togglePause}
+                        className="px-6 py-3 border border-[#E8E4DF] rounded-xl font-semibold text-sm"
+                      >
+                        {isSpeakingPaused ? 'LANJUTKAN' : 'JEDA'}
+                      </button>
+                      <button
+                        onClick={() => finishSpeakingSession()}
+                        className="px-6 py-3 bg-[#7A1E2C] text-white rounded-xl font-semibold text-sm"
+                      >
+                        SELESAIKAN
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {practiceStep === 'RESULT' && latestResult && (
+                  <div className="bg-white border border-[#E8E4DF] rounded-2xl p-6 sm:p-10 space-y-6">
+                    <div className="text-center border-b border-[#E8E4DF] pb-4">
+                      <h2 className="font-heading text-2xl font-extrabold">SELESAI.</h2>
+                      <p className="text-sm text-[#6B6B6B]">Satu latihan lagi selesai. Mari lihat perkembanganmu.</p>
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                      <div className="p-3 bg-[#F7F5F2] rounded-lg">
+                        <span className="text-[11px] text-[#6B6B6B] block">Waktu Berbicara</span>
+                        <span className="font-bold text-sm">{formatDurationText(latestResult.actualDuration)}</span>
+                      </div>
+                      <div className="p-3 bg-[#F7F5F2] rounded-lg">
+                        <span className="text-[11px] text-[#6B6B6B] block">Kelancaran</span>
+                        <span className="font-bold text-sm">{latestResult.fluencyScore}%</span>
+                      </div>
+                      <div className="p-3 bg-[#F7F5F2] rounded-lg">
+                        <span className="text-[11px] text-[#6B6B6B] block">Kata Pengisi</span>
+                        <span className="font-bold text-sm">{latestResult.fillerCount}</span>
+                      </div>
+                    </div>
+                    <div className="p-4 bg-white border border-[#E8E4DF] rounded-xl">
+                      <span className="text-xs font-semibold text-[#7A1E2C] uppercase block">Evaluasi</span>
+                      <p className="text-xs text-[#1C1C1C] mt-1">{latestResult.feedback}</p>
+                    </div>
+                    <div className="p-4 bg-[#7A1E2C]/5 rounded-xl border border-[#7A1E2C]/15">
+                      <span className="text-xs font-semibold text-[#7A1E2C] uppercase block">LATIHAN BERIKUTNYA</span>
+                      <p className="text-xs text-[#1C1C1C] mt-1">{latestResult.nextFocus}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <span className="text-xs font-semibold text-[#6B6B6B] uppercase block">Transkrip Ucapanmu</span>
+                      <div className="p-3 bg-[#F7F5F2] rounded-lg text-xs max-h-36 overflow-y-auto">{latestResult.transcript}</div>
+                    </div>
+                    <button
+                      onClick={() => setPracticeStep('PREPARE')}
+                      className="w-full bg-[#7A1E2C] text-white py-3 rounded-xl font-semibold text-sm"
+                    >
+                      LATIHAN LAGI
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* PERKEMBANGAN */}
+            {currentTab === 'PERKEMBANGAN' && (
+              <div className="space-y-6">
+                <h2 className="font-heading text-2xl font-extrabold">PERKEMBANGANMU</h2>
+                {history.length === 0 ? (
+                  <p className="text-sm text-[#6B6B6B]">Belum ada data perkembangan. Selesaikan latihan pertamamu.</p>
+                ) : (
+                  <div className="space-y-6">
+                    <div className="bg-white border border-[#E8E4DF] rounded-xl p-5">
+                      <span className="text-xs font-semibold text-[#6B6B6B] uppercase">Level Saat Ini</span>
+                      <h3 className="font-heading text-xl font-bold text-[#7A1E2C]">{dashboardStats.level.name}</h3>
+                    </div>
+                    <div className="bg-white border border-[#E8E4DF] rounded-xl p-5 space-y-4">
+                      <h4 className="font-heading font-bold text-sm">TREN KELANCARAN (%)</h4>
+                      <div className="h-36 flex items-end gap-2 border-b border-[#E8E4DF] pb-2">
+                        {history.slice(0, 10).reverse().map((item, idx) => (
+                          <div key={idx} className="flex-1 flex flex-col items-center">
+                            <div className="w-full bg-[#7A1E2C] rounded-t" style={{ height: `${item.fluencyScore}%` }}></div>
+                            <span className="text-[10px] text-[#6B6B6B] mt-1">{item.fluencyScore}%</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setShowDeleteModal(true)}
+                      className="text-xs font-semibold text-rose-700 p-2"
+                    >
+                      HAPUS SEMUA DATA
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* RIWAYAT */}
+            {currentTab === 'RIWAYAT' && (
+              <div className="space-y-4">
+                <h2 className="font-heading text-2xl font-extrabold">RIWAYAT LATIHAN</h2>
+                {history.length === 0 ? (
+                  <p className="text-sm text-[#6B6B6B]">Belum ada riwayat latihan.</p>
+                ) : (
+                  <div className="space-y-3">
+                    {history.map(item => (
+                      <div
+                        key={item.id}
+                        onClick={() => setSelectedHistoryItem(item)}
+                        className="bg-white border border-[#E8E4DF] rounded-xl p-4 cursor-pointer hover:border-[#7A1E2C]"
+                      >
+                        <h4 className="font-heading font-bold text-sm text-[#7A1E2C]">{item.topic}</h4>
+                        <div className="text-xs text-[#6B6B6B] mt-1 flex gap-3">
+                          <span>{formatDurationText(item.actualDuration)}</span>
+                          <span>• Kelancaran {item.fluencyScore}%</span>
+                          <span>• {formatDateText(item.createdAt)}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </main>
+
+          {/* History Detail Modal */}
+          {selectedHistoryItem && (
+            <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
+              <div className="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4">
+                <h3 className="font-heading font-bold text-lg text-[#7A1E2C]">{selectedHistoryItem.topic}</h3>
+                <div className="text-xs text-[#6B6B6B]">{formatDateText(selectedHistoryItem.createdAt)}</div>
+                <div className="p-3 bg-[#F7F5F2] rounded text-xs">{selectedHistoryItem.transcript}</div>
+                <button
+                  onClick={() => setSelectedHistoryItem(null)}
+                  className="w-full bg-[#1C1C1C] text-white py-2 rounded-lg text-xs"
+                >
+                  Tutup
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Delete Confirmation Modal */}
+          {showDeleteModal && (
+            <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
+              <div className="bg-white rounded-2xl max-w-sm w-full p-6 space-y-4">
+                <h3 className="font-heading font-bold text-lg">HAPUS SEMUA DATA?</h3>
+                <p className="text-xs text-[#6B6B6B]">Apakah kamu yakin? Seluruh riwayat latihan akan dihapus permanen.</p>
+                <div className="flex gap-2">
+                  <button onClick={handleClearAllData} className="flex-1 bg-rose-700 text-white py-2 rounded-lg text-xs">HAPUS DATA</button>
+                  <button onClick={() => setShowDeleteModal(false)} className="flex-1 border py-2 rounded-lg text-xs">BATAL</button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Footer */}
+          <footer className="border-t border-[#E8E4DF] bg-[#F7F5F2] py-6 text-xs text-[#6B6B6B] text-center">
+            <div className="max-w-5xl mx-auto px-4">
+              Data latihan disimpan secara lokal di browser ini. VOKARA tidak memerlukan akun untuk digunakan.
+            </div>
+          </footer>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
